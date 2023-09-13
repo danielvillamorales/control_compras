@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from datetime import date
+from compras.utils.sendmails import send_mail_for_authorization
 
 
 def crearCabecera(request):
@@ -119,6 +120,10 @@ def __aprobar_pedido_encargado(request, id):
         pedido.fecha_aprobado = date.today()
         pedido.estado = '2'
         pedido.save()
+        usuarios_autorizadores = CategoriaUsuario.objects.filter(categoria = pedido.categoria_id).values('usuario')
+        correos_usuarios_autorizadores = User.objects.filter(id__in=usuarios_autorizadores)
+        if len(correos_usuarios_autorizadores) > 0:
+            send_mail_for_authorization(pedido, correos_usuarios_autorizadores)
         messages.success(request, 'Pedido aprobado con exito')
     else:
         messages.warning(request, 'no puedes aprobar un pedido ya que no eres el encargado de el.')

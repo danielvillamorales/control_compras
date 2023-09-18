@@ -121,11 +121,6 @@
                     {%for p in pedido %}
                     {% if p.estado == '0' %}
                     <button class="btn btn-danger" name="bfinalizar" value="bfinalizar" >Finalizar Toma</button>
-                    <div class="mb-3">
-                        <span class="input-group-text" id="inputGroup-sizing-default" for="id_fecha_final" >Foto Cotizacion:</span>
-                        <input class="form-control" type="file" name="iimagen" id="iimagen" accept="image/*" required>
-                        <button class="btn btn-warning btn-sm" id="bsubirimagen" value="bsubirimagen" name="bsubirimagen">Subir imagen</button>
-                    </div>
                     {% endif %}
                     {% if p.estado == '1' %}
                     <button class="btn btn-success" name="baprobarencargado" value="baprobarencargado">Aprobar Pedido</button>
@@ -146,6 +141,18 @@
                     {% if p.imagen %}
                     <a class="btn btn-outline-success btn-sm" onclick="mostrar_foto({{ p.id }})" href="#">ver foto</a>
                     <img src="../../..{{ p.imagen.url }}" alt="imagen_cotizacion" id="img_{{p.id}}" style="display: none; width:100%;">
+                    {% endif %}
+                    {% endfor %}
+                </form>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {%for p in pedido %}
+                    {% if p.estado == '0' %}
+                    <div class="mb-3">
+                        <span class="input-group-text" id="inputGroup-sizing-default" for="id_fecha_final" >Foto Cotizacion:</span>
+                        <input class="form-control" type="file" name="iimagen" id="iimagen" accept="image/*" required>
+                        <button class="btn btn-warning btn-sm" id="bsubirimagen" value="bsubirimagen" name="bsubirimagen">Subir imagen</button>
+                    </div>
                     {% endif %}
                     {% endfor %}
                 </form>

@@ -64,6 +64,7 @@ class CompraCabecera(models.Model):
     estado = models.CharField(max_length=1, choices=ESTADOS_COMPRA, default='0')
     total = models.IntegerField(default=0)
     valor_entregado = models.IntegerField(default=0)
+    valor_real = models.IntegerField(default=0)
 
     def __str__(self):
         return f'{self.id} - {self.asignado_a} - {self.fecha_registro} - {self.categoria_id} - {self.usuario_registro} - {self.estado}'

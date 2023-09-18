@@ -33,9 +33,15 @@
                 {% endif %}
                 {%for p in pedido %}
                 <h4><span class="badge bg-primary">{{p.fecha_registro}}  </span> <span class="badge bg-primary"># {{p.id}}   </span> <span class="badge bg-danger">{{p.get_estado_display}}</span></h4>
-                <h5><span class="badge bg-secondary">Solicitado   </span>{{p.usuario_registro.first_name}} {{p.usuario_registro.last_name}}</h5>
-                <h5><span class="badge bg-secondary">Asignado a  </span>{{p.asignado_a.first_name}} {{p.asignado_a.last_name}}</h5>
-                <p class="text-bg-info p-3">{{p.observaciones}}</p>
+                <h5><span class="badge bg-secondary">Solicitado </span>{{p.usuario_registro.first_name}} {{p.usuario_registro.last_name}}
+                    <span class="badge bg-secondary">Aprobado por </span>  {{p.usuario_aprobado.first_name}} {{p.usuario_aprobado.last_name}}
+                </h5>
+                <h5>
+                    <span class="badge bg-secondary">Asignado a  </span>  {{p.asignado_a.first_name}} {{p.asignado_a.last_name}}
+                    <span class="badge bg-secondary">Autorizado por  </span>    {{p.usuario_autorizado.first_name}} {{p.usuario_autorizado.last_name}}
+                </h5>
+
+                <p class="text-bg-info p-3" style="background-color: rgb(99, 146, 247);">{{p.observaciones}}</p>
                 
             </div>
             {% if p.estado == '0' %}
@@ -72,14 +78,6 @@
             {% endif %}
             
             <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 col-12">
-                {% if messages %}
-                {% for message in messages %}
-                <ul >
-                    <li {% if message.tags %} 
-                    class="alert alert-{%if message.tags == 'error' %}danger{% else %}{{ message.tags }} {%endif%}  alert-dismissible fade show"{% endif %} role="alert">{{ message }} </li>
-                </ul>
-                {% endfor %}
-                {% endif %}
                 <table class="table table-hover table-striped table-sm">
                     <thead>
                         <tr>
@@ -135,6 +133,10 @@
                     {% if p.estado == '3' %}
                     <input type="number" placeholder="Valor Entregado O Comprado" class="input-group-text" name="ientrega" id="ientrega"  required>
                     <button class="btn btn-success" id="bentrega" name="bentrega" value="bentrega">Entrega</button>
+                    {% endif %}
+                    {% if p.estado == '4' %}
+                    <input type="number" placeholder="Valor Real Entregado" class="input-group-text" name="ivalorreal" id="ivalorreal"  required>
+                    <button class="btn btn-success" id="bentrega" name="bvalorreal" value="bvalorreal">Ingresar</button>
                     {% endif %}
                     {% endfor %}
                 </form>

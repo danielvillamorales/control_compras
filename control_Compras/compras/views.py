@@ -42,7 +42,7 @@ def __buscadores(request):
         return CompraCabecera.objects.filter(Q(categoria_id__in=categorias_usuarios, estado='2')| Q(usuario_registro=request.user)).order_by('-id')
     elif len(User.objects.filter(user_permissions__codename='puede_entregar_compra', id = request.user.id ))>0:
         print('entro aqui a entregas')
-        return CompraCabecera.objects.filter(Q(usuario_entrega=request.user, estado='3')| Q(usuario_registro=request.user)).order_by('-id') 
+        return CompraCabecera.objects.filter(Q(asignado_a=request.user, estado__in=['3','4'])| Q(usuario_registro=request.user)).order_by('-estado','-id') 
     else:
         return __buscar_encargado(request)
 
@@ -162,6 +162,16 @@ def __entregar_pedido(request, id , entregado):
     else:
         messages.warning(request, 'no puedes entregar un pedido ya que no eres el responsable de el.')
 
+def __valor_real(request , id , real):
+    pedido = CompraCabecera.objects.get(id=id)
+    if request.user.id == pedido.asignado_a.id:
+        pedido.valor_real = real
+        pedido.estado = '5'
+        pedido.save()
+        messages.success(request, 'Valor real actualizado con exito')
+    else:
+        messages.warning(request, 'no puedes actualizar el valor real de un pedido ya que no eres el responsable de el.')
+
 @login_required
 def comprasDetalle(request, id):
     print(f'llego hasta aqui? {id}')
@@ -191,6 +201,10 @@ def comprasDetalle(request, id):
         if request.POST.get('bentrega'):
             entregado = int(request.POST.get('ientrega'))
             __entregar_pedido(request, id, entregado)
+            return redirect('compras')
+        if request.POST.get('bvalorreal'):
+            real = int(request.POST.get('ivalorreal'))
+            __valor_real(request, id, real)
             return redirect('compras')
     detalle = CompraDetalle.objects.filter(compra_cabecera=id)
     total = 0 if len(detalle)== 0 else sum(i.subtotal for i in detalle)

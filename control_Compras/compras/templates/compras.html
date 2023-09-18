@@ -63,7 +63,7 @@
             </form>
         </div>
         <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 col-12" > 
-            <h6 style="color:rgb(0, 79, 226)">Pedidos</h6>
+            <h4 style="color:rgb(0, 79, 226)">Pedidos</h4>
             <hr class="border border-danger border-2 opacity-50">
             <div class="accordion accordion-flush accordion-striped" id="pedidosAccordion">
                 {% for p in pedidos %}
@@ -73,7 +73,9 @@
                             <span class="btn btn-secondary btn-sm">#{{p.id}}</span>
                             <span>Solicitado por: {{p.usuario_registro.first_name}} {{p.usuario_registro.last_name}}</span> 
                             <span style="position: absolute; right: 2em;">Total: <button class="btn btn-primary btn-sm ">{{p.total | intcomma}}</button></span>
-                            {% if p.estado == '4'%}<p>Valor Entregado: <button class="btn btn-info btn-sm">{{p.valor_entregado}}</button></p> {% endif %}
+                            {% if p.estado >= '4' %}
+                            <p>Valor Entregado: <button class="btn btn-info btn-sm">{{p.valor_entregado | intcomma}}</button></p> 
+                            <p>Valor Real: <button class="btn btn-primary btn-sm">{{p.valor_real | intcomma}}</button></p>{% endif %}
                         </h6>
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{p.id}}" aria-expanded="false" aria-controls="flush-collapse{{p.id}}">
                             <span>Asig: {{p.asignado_a.first_name}} {{p.asignado_a.last_name}}</span>  

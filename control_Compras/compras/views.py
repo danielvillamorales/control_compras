@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from datetime import date
 from compras.utils.sendmails import send_mail_for_authorization
+from django.conf import settings
+import os
 
 
 def crearCabecera(request):
@@ -172,9 +174,26 @@ def __valor_real(request , id , real):
     else:
         messages.warning(request, 'no puedes actualizar el valor real de un pedido ya que no eres el responsable de el.')
 
+def __guardar_imagen(request, id):
+    pedido = CompraCabecera.objects.get(id=id)
+    imagen = request.FILES['iimagen']
+    print(imagen.name)
+    directorio_destino = 'compras/'+str(id)+'/'
+    ruta_completa = os.path.join(settings.MEDIA_ROOT, directorio_destino, imagen.name)
+    try:
+        os.makedirs(os.path.dirname(ruta_completa))
+    except OSError as exc:
+        pass
+    with open(ruta_completa, 'wb+') as destination:
+        for chunk in imagen.chunks():
+            destination.write(chunk)
+    pedido.imagen = os.path.join(directorio_destino, imagen.name)
+    pedido.save()
+    messages.success(request, 'Imagen guardada con exito')
+
+
 @login_required
 def comprasDetalle(request, id):
-    print(f'llego hasta aqui? {id}')
     pedido = CompraCabecera.objects.filter(id=id)
     tipo_productos = TipoProducto.objects.all()
     if request.method == 'POST':
@@ -185,7 +204,10 @@ def comprasDetalle(request, id):
             eliminar_detalle(request, request.POST.get('bdelete'), pedido)
         if request.POST.get('bfinalizar'):
             __finalizar_pedido(request, id)
-            return redirect('compras') 
+            return redirect('compras')
+        if request.POST.get('bsubirimagen'):
+            __guardar_imagen(request, id)
+            redirect('comprasDetalle', id=id)
         if request.POST.get('brechazarencargado'):
             __rechazar_pedido_encargado(request, id)
             return redirect('compras')
@@ -210,5 +232,8 @@ def comprasDetalle(request, id):
     total = 0 if len(detalle)== 0 else sum(i.subtotal for i in detalle)
     __totalizar_cabercera(total, id)
     return render(request, 'comprasDetalle.html', {'pedido': pedido, 'detalle': detalle, 'tipo_productos': tipo_productos, 'total': total})
+
+
+
 
 

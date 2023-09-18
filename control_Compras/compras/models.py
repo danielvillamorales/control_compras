@@ -65,6 +65,7 @@ class CompraCabecera(models.Model):
     total = models.IntegerField(default=0)
     valor_entregado = models.IntegerField(default=0)
     valor_real = models.IntegerField(default=0)
+    imagen = models.ImageField(upload_to='compras', null=True, blank=True)
 
     def __str__(self):
         return f'{self.id} - {self.asignado_a} - {self.fecha_registro} - {self.categoria_id} - {self.usuario_registro} - {self.estado}'

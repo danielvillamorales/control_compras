@@ -17,6 +17,8 @@ from django.contrib import admin
 from django.urls import path
 from django.contrib.auth.views import LoginView,LogoutView
 from compras.views import compras,comprasDetalle
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,3 +28,5 @@ urlpatterns = [
     path('compras/',compras,name="compras"),
     path('comprasDetalle/<int:id>/',comprasDetalle,name="comprasDetalle"),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

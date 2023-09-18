@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="{% static  'css/estilosCabecera.css' %}?1">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <title>Control Compras Ka</title>
+
 </head>
 <body class="bg-light text-dark">         
     <div class="row">
@@ -38,7 +39,6 @@
         {% endif %}
             <form method="POST">
                 {% csrf_token %}
-        
                 <div class="input-group mb-3">
                     <label class="input-group-text" for="icategoria">Categoria</label>
                     <select class="form-select" id="icategoria" name="icategoria" required>

@@ -56,6 +56,15 @@
                     </select>
                 </div>
                 <div class="input-group mb-3">
+                    <label class="input-group-text" for="icategoria">Centro Costo</label>
+                    <select class="form-select" id="icentrocosto" name="icentrocosto" required>
+                        <option place-holder="elija una opcion" selected></option>
+                        {%for cc in centrosdecosto %}
+                        <option value="{{cc.id}}">{{cc}}</option>
+                        {% endfor%}
+                    </select>
+                </div>
+                <div class="input-group mb-3">
                     <span class="input-group-text" id="inputGroup-sizing-default">Observaciones</span>
                     <textarea type="text" class="form-control" name="iobservaciones" id="iobservaciones" required></textarea>
                     <button class="btn btn-dark" type="submit" name="bcabecera" id="bcabecera" value="bcabecera">+</button>

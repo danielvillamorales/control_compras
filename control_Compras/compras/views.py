@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from compras.models import Categoria, CategoriaUsuario, CompraCabecera, CompraDetalle, TipoProducto, UsuarioEncargado
+from compras.models import Categoria, CategoriaUsuario, CompraCabecera, CompraDetalle, TipoProducto, UsuarioEncargado, CentroCosto
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import HttpResponseRedirect
@@ -17,11 +17,13 @@ def crearCabecera(request):
             categoria = Categoria.objects.filter(id=request.POST.get('icategoria'))
             observaciones = request.POST.get('iobservaciones')
             usuario_asignado = User.objects.filter(id=request.POST.get('iaprobador'))
+            centrocosto = CentroCosto.objects.get(id = request.POST.get('icentrocosto'))
             compracabera = CompraCabecera()
             compracabera.asignado_a = usuario_asignado[0]
             compracabera.categoria_id = categoria[0]
             compracabera.usuario_registro = request.user
             compracabera.observaciones = observaciones
+            compracabera.centro_costo = centrocosto
             compracabera.save()
             return compracabera
         messages.info(request, 'No tiene a ningun encargado asociado para crear pedidos')
@@ -53,13 +55,14 @@ def __buscadores(request):
 def compras(request):
     categorias = Categoria.objects.all()
     aprobadores = User.objects.filter(Q(user_permissions__codename='puede_entregar_compra'))
+    centrosdecosto= CentroCosto.objects.all()
     pedidos = __buscadores(request)
     if request.method == 'POST':
         if request.POST.get('bcabecera'):
             cabecera = crearCabecera(request)
             if cabecera != None:
                 return redirect('comprasDetalle', id=cabecera.id)
-    return render(request, 'compras.html', {'categorias': categorias, 'aprobadores': aprobadores, 'pedidos': pedidos})
+    return render(request, 'compras.html', {'categorias': categorias, 'aprobadores': aprobadores, 'pedidos': pedidos, 'centrosdecosto': centrosdecosto})
 
 
 def crear_detalle(request, pedido):
@@ -195,7 +198,7 @@ def __guardar_imagen(request, id):
 @login_required
 def comprasDetalle(request, id):
     pedido = CompraCabecera.objects.filter(id=id)
-    tipo_productos = TipoProducto.objects.all()
+    tipo_productos = TipoProducto.objects.filter(categoria = pedido[0].categoria_id)
     if request.method == 'POST':
         print(request.POST)
         if request.POST.get('bdetalle'):

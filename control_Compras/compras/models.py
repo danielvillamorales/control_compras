@@ -16,16 +16,25 @@ ESTADOS_COMPRA = (
 def get_today():
     return date.today()
 
-class TipoProducto(models.Model):
+
+class Categoria(models.Model):
     codigo = models.CharField(max_length=10)
     nombre = models.CharField(max_length=250)
 
     def __str__(self):
         return f'{self.codigo} - {self.nombre}'
-
-class Categoria(models.Model):
+    
+class CentroCosto(models.Model):
     codigo = models.CharField(max_length=10)
     nombre = models.CharField(max_length=250)
+
+    def __str__(self):
+        return f'{self.codigo} - {self.nombre}'
+    
+class TipoProducto(models.Model):
+    codigo = models.CharField(max_length=10)
+    nombre = models.CharField(max_length=250)
+    categoria = models.ForeignKey('Categoria', on_delete=models.PROTECT, null=True, blank=True)
 
     def __str__(self):
         return f'{self.codigo} - {self.nombre}'
@@ -54,6 +63,7 @@ class CompraCabecera(models.Model):
     fecha_autorizado = models.DateField(null=True, blank=True,)
     fecha_entrega = models.DateField(null=True, blank=True,)
     fecha_cerrado = models.DateField(null=True, blank=True,)
+    centro_costo = models.ForeignKey(CentroCosto, on_delete=models.PROTECT, null=True, blank=True)
     categoria_id = models.ForeignKey(Categoria, on_delete=models.PROTECT, related_name='categoria_id')
     usuario_registro = models.ForeignKey(User, on_delete=models.PROTECT, related_name='usuario_registro')
     usuario_aprobado = models.ForeignKey(User, null=True, blank=True, on_delete=models.PROTECT, related_name='usuario_aprobado')
